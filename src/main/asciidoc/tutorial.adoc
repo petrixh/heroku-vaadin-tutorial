@@ -1,6 +1,6 @@
 :sectnums:
 
-# Vaadin tutorial
+= Vaadin tutorial
 
 This is tutorial that gives you an overview how you can use Vaadin Framework to
 build web UI's for your Java applications. All you need to start with is an IDE
@@ -14,40 +14,51 @@ basic Vaadin development, but you can use the result as a basis for more Vaadin
 experiments with add-ons, making custom theme, optimizing the result for mobile
 support or adding other views.
 
-## Creating a project using archetype
+== Creating a project using archetype
 
 As a starting point for the application we'll use Maven archetype called
 vaadin-archetype-application. Maven archetypes are projects stubs with basic
 build script and some example code.
 
-Start by choosing "File->New->Project" to open the project creation wizard. In
-the dialog you'll find a group  "Maven" and "Maven project". Next wizard page is
+Start by choosing _File->New->Project_ to open the project creation wizard. In
+the dialog you'll find a group _Maven_ and _Maven project_. Next wizard page is
 ok with defaults, but from third page you'll need to choose
-"vaadin-archetype-application" archetype.
+_vaadin-archetype-application_ archetype.
+
+image::createMavenProject.png[Create a new Maven built Vaadin project.]
 
 You can try to find it using the  filtering function, but in some cases Eclipse
 hasn't yet indexed the archetype catalog, so you might need to manually add the
-archetype details with "Add Archetype" button. The Group Id is "com.vaadin",
-Artifact Id is "vaadin-archetype-application" and as a version you can use
-the latest Vaadin version, at the time of writing "7.6.0".
+archetype details with _Add Archetype_ button. The Group Id is "com.vaadin",
+Artifact Id is _vaadin-archetype-application_ and as a version you can use
+the latest Vaadin version, at the time of writing _7.6.0_.
 
-On next wizard page, type a in "my.vaadin" as Group Id, "app" as Artifact Id and
-click "Finish". If this is your first ever Vaadin app, creating a project might
+On next wizard page, type in _my.vaadin_ as Group Id, _app_ as Artifact Id and
+click _Finish_. If this is your first ever Vaadin app, creating a project might
 take a while, depending of the speed of your network, as Vaadin libraries and
 couple of dependencies are being downloaded.
 
-Right click on the created project and choose "Run as -> Maven Install". This
+Right click on the created project and choose _Run as -> Maven Install_. This
 will initiate a full build of your application and finally create a war file to
 the "target" directory that you can deploy to your application server. As the
 project as set up a basis for add-on usage and contains a project specific
 theme, the first build will take a while.
 
 To test this first Vaadin application, right click on the project and choose
-"Run as -> Maven build...". Type "jetty:run" to the "Goals" input and e.g. "Run
-in jetty" to the "Name" input. Clicking "Run" will download a small server
-to host your application (if not cached to your local Maven repository), and use
-it to host your first Vaadin application. Once the server has started, open your
-browser to address "http://localhost:8080/" to see the app running.
+_Debug as -> Maven build..._. Debug mode is slightly slower, but it often helps
+you to figure out what is happening in our application. Type _jetty:run_ to the
+_Goals_ input and _Run in jetty_ to the _Name_ input.
+
+image::debugAsMavenBuild.png[Starting server using Maven target]
+
+To make debugging work properly, add your Java project to the source lookup path from the source tab.
+
+image::debugAsMavenBuildAddSources.png[Adding sources for debugging]
+
+Clicking _Debug_ will download a small server to host your application (if not
+cached to your local Maven repository), and use it to host your first Vaadin
+application. Once the server has started, open your browser to address
+"http://localhost:8080/" to see the app running.
 
 The UI code (and Servlet declaration) used by the app stub can be found from the
 MyUI.java file. You can read it through and see how it works. If you make some
@@ -55,10 +66,19 @@ changes to the code, the jetty server will notice the changes and in a couple of
 seconds most changes are automatically deployed. Reloading a browser will show
 the changes.
 
-Clicking the red square in the Console view will terminate the server process.
-You can restart it easily form the run history.
+You can also double click the line number in the Java editor, e.g. on click
+listener. This will add a breakpoint to the selected line. If you then use your
+browser to click the button, the execution will stop on the line and you can
+inspect the variables and step through the execution. Clicking on _play_ icon in
+toolbar will continue the execution, double clicking on breakpoint row again
+will disable the breakpoint.
 
-## Adding demo "backend"
+image::debugInBreakPointVariable.png[Execution in a break point in button click listener]
+
+Clicking the red square in the Console view will terminate the server process.
+You can restart it easily form the run/debug history.
+
+== Adding demo "backend"
 
 Before getting more into real Vaadin development, let's introduce some domain
 objects and a "fake backend". In a real world application you'll most likely
@@ -77,7 +97,7 @@ paste them in Eclipse over the "my.vaadin" package.
 
 The actual implementation of these classes is not relevant for this tutorial.
 
-## Listing entities with Grid
+== Listing entities with Grid
 
 Typically, when you start building data centric applications, the first thing
 you want to do is list your data. There are several components in Vaadin to do
@@ -103,7 +123,7 @@ public class MyUI extends UI {
 
 If you are new to Java development, you probably got scared of the a red
 compilation error for the line where Grid got introduced, due to a missing
-import. This is easily fixed by Eclipse using "Source -> Organize Imports"
+import. This is easily fixed by Eclipse using _Source -> Organize Imports_
 command, learn its shortcut, you'll be using it a lot in Java development. In
 possible class name collisions, choose the class from com.vaadin.ui package if
 you want to import core Vaadin UI classes like Grid.
@@ -170,7 +190,7 @@ public void updateList() {
 ----
 
 
-## Creating live filtering for entities
+== Creating live filtering for entities
 
 A proper search is feature of every modern application and it is also a nice
 Vaadin development exercise. Let's add a filtering function to the listing we
@@ -193,17 +213,20 @@ filterText.addTextChangeListener(e -> {
 The text change listener is another listener (in addition to more commonly used
 ValueChangeListener) you can use with text fields in Vaadin. It is fired lazily
 when user is typing, but only when there is a small pause in the typing. This
-makes it perfect for this kind of automatic filtering. When user has changed the text, we'll just update the listing like in updateList method, but use the
+makes it perfect for this kind of automatic filtering. When user has changed the
+text, we'll just update the listing like in updateList method, but use the
 current text as a filter for entries.
 
-To keep the updateList method functional, it should also take consider the value of the filterText field. Change the line fetching the customers into this:
+To keep the updateList method functional, it should also take consider the value
+of the filterText field. Change the line fetching the customers into this:
 
 [source,java]
   List<Customer> customers = service.findAll(filterText.getValue());
 
 The search field can naturally be cleared with keyboard, but let's improve the
 usability a bit and make a short exercise to compose better components from low
-level Vaadin components. To add a clear button next to the text field, add following lines:
+level Vaadin components. To add a clear button next to the text field, add
+following lines:
 
 [source,java]
 ----
@@ -222,7 +245,13 @@ hover the mouse over the button and wonder what to do with it. In the click
 listener we simply clear the text form the field and refresh the content of the
 listing.
 
-Vaadin contains lots of different kind of layouts. A simple way to align the text field and button would be to use HorizontalLayout. An alternative way we use here is using CssLayout, which is a lightweight layout that is easy to customize with css. Even if you wouldn't want to play with css yourself, you can many times use one of the existing style rules in the Valo theme. Following snippet will create a nice compact "composition" of both the TextField and the clear button:
+Vaadin contains lots of different kind of layouts. A simple way to align the
+text field and button would be to use HorizontalLayout. An alternative way we
+use here is using CssLayout, which is a lightweight layout that is easy to
+customize with css. Even if you wouldn't want to play with css yourself, you can
+many times use one of the existing style rules in the Valo theme. Following
+snippet will create a nice compact "composition" of both the TextField and the
+clear button:
 
 [source,java]
 ----
@@ -235,9 +264,10 @@ Finally, just add the composition to your main layout before the grid:
 
     layout.addComponents(filtering, grid);
 
-If you wish, you can take an extra exercise and extract the composition of CssLayout, TextField and the clear button into a re-usable class.
+If you wish, you can take an extra exercise and extract the composition of
+CssLayout, TextField and the clear button into a re-usable class.
 
-## Creating a form using Vaadin Designer
+== Creating a form using Vaadin Designer
 
 The form to edit Customer objects can be build using several methods. Visual
 composition is an easy way to do it. Vaadin Designer is an Eclipse plugin that
@@ -247,8 +277,15 @@ using another IDE or like more to code your UI's you can take an alternative
 path of the tutorial, <<Creating a form using plain Java>> where you create the
 form with plain Java code.
 
-
 TODO installation instruction
+
+image::pluginEclipseMarketPlace.png[Open Eclipse marketplace]
+
+image::pluginEclipseMarketPlace2.png[Eclipse marketplace search]
+
+image::pluginConfirmInstall.png[Confirm installation]
+
+image::pluginCreateDesign.png[Create design]
 
 TODO VIDEO how to create the CustomerFormDesign.html, otherwise it will
 become too long, boring and error prone for users to repeat it
@@ -259,7 +296,7 @@ mode, provide copy-pasteable "final state" for next step without issues
 TODO extend CustomerForm form CustomerFormDesign, mostly the same as the rest
 of <<Creating a form using plain Java>> chapter.
 
-## Creating a form using plain Java
+== Creating a form using plain Java
 
 This is an alternative step to the <<Creating a form using Vaadin Designer>>,
 where you'll build the form UI programmatically with plain Java.
@@ -286,7 +323,9 @@ Button save = new Button("Save");
 Button delete = new Button("Delete");
 ----
 
-We will also need a reference to the currently edited Customer object, CustomerService and the MainUI that uses this class. Add these fields and a basic constructor that accepts MainUI as a parameter as well:
+We will also need a reference to the currently edited Customer object,
+CustomerService and the MainUI that uses this class. Add these fields and a
+basic constructor that accepts MainUI as a parameter as well:
 
 ----
 CustomerService service = CustomerService.getInstance();
@@ -325,13 +364,17 @@ main.setExpandRatio(grid, 1);
 layout.addComponents(filtering, main);
 ----
 
-Let's get back to the CustomerForm and enhance it. The first thing we'll need
-is to populate the options for the select. To add all enum values as valid selections, add following line to the constructor:
+Let's get back to the CustomerForm and enhance it. The first thing we'll need is
+to populate the options for the select. To add all enum values as valid
+selections, add following line to the constructor:
 
 [source,java]
    status.addItems(CustomerStatus.values());
 
-Let's also improve the UX a bit. The most common thing your users will want to do with this kind of form is to save it. Let's decorate the button with a style name that makes it more prominent in the UI and give it a keyboard shortcut - simply an enter hit in this case:
+Let's also improve the UX a bit. The most common thing your users will want to
+do with this kind of form is to save it. Let's decorate the button with a style
+name that makes it more prominent in the UI and give it a keyboard shortcut -
+simply an enter hit in this case:
 
 [source,java]
 ----
@@ -339,9 +382,11 @@ save.setStyleName(ValoTheme.BUTTON_PRIMARY);
 save.setClickShortcut(KeyCode.ENTER);
 ----
 
-Last step to finish our form is to create an API for the MainUI to assing a
-Customer object that the form should edit and add some logic to actaully save
-the UI. We'll start by creating a setter method for the Customer field. Just type "setCus" in the body of the class and hit autocomplete (CTRL-SPACE) and Eclipse will create you a method stub. Complete it with following declaration:
+Last step to finish our form is to create an API for the MainUI to pass a
+Customer object the form should edit and add some logic to actually save
+the UI. We'll start by creating a setter method for the Customer field. Just
+type "setCus" in the body of the class and hit autocomplete (CTRL-SPACE) and
+Eclipse will create you a method stub. Complete it with following declaration:
 
 [source,java]
 ----
@@ -358,14 +403,17 @@ public void setCustomer(Customer customer) {
 
 The call to *BeanFieldGroup.bindFieldsUnbuffered* method will initialize all
 similarly named editor fields in this form with their counterpart in the given
-domain object. Also it will automatically update the values in the domain objects as the corresponding field value changes in the UI. Note, that if the naming convention
-don't fit for your needs, you can use PropertyId annotation on fields to explicitly declare the edited property.
+domain object. Also it will automatically update the values in the domain
+objects as the corresponding field value changes in the UI. Note, that if the
+naming convention don't fit for your needs, you can use PropertyId annotation on
+fields to explicitly declare the edited property.
 
-As a side effects, when a customer is selected for editing, we'll also want to show the delete buttons for entities that
-actually are persisted, ensure the form is visible and focus the first field to
-improve the UX.
+As a side effects, when a customer is selected for editing, we'll also want to
+show the delete buttons for entities that actually are persisted, ensure the
+form is visible and focus the first field to improve the UX.
 
-The last thing we need to do is to handle save and delete button clicks. Add following methods to the CustomerForm class:
+The last thing we need to do is to handle save and delete button clicks. Add
+following methods to the CustomerForm class:
 
 [source,java]
 ----
@@ -380,7 +428,8 @@ protected void save() {
 }
 ----
 
-Finally we'll add listeners to buttons to call these methods. Adding these simple lambda expression to the constructor will take care of that:
+Finally we'll add listeners to buttons to call these methods. Adding these
+simple lambda expression to the constructor will take care of that:
 
 [source,java]
 ----
@@ -393,9 +442,11 @@ want to introduce an interface for the parent field or, event better, use event
 system (e.g. CDI events) to completely decouple the components. We'll leave that
 out of this tutorial for simplicity.
 
-## Connecting the form to the application
+== Connecting the form to the application
 
-We'll use the form in two use cases form the MyUI class: editing an existing customer and creating a new one. By default we want it to be invisible, so lets first hide it by default by adding this line to the constructor:
+We'll use the form in two use cases form the MyUI class: editing an existing
+customer and creating a new one. By default we want it to be invisible, so lets
+first hide it by default by adding this line to the constructor:
 
 [source,java]
     form.setVisible(false);
@@ -415,7 +466,8 @@ grid.addSelectionListener(event -> {
 ----
 
 So we simple take the selected row and pass the corresponding customer object to
-the form we created in previous step. If the the selection is empty, we'll simply hide the form.
+the form we created in previous step. If the the selection is empty, we'll
+simply hide the form.
 
 To allow users to create new customer records, we'll add a simple "Add customer
 button" to the top of the UI, right next to the filtering composition. In click
@@ -449,17 +501,19 @@ IMAGE
 
 You can also download TODO the final state of the tutorial from github.
 
-## It works! What next?
+== It works! What next?
 
-Congratulations! Users can now create, read, update and delete customer records stored in the demo backend and you have completed creating your first CRUD UI with
-Vaadin.
+Congratulations! Users can now create, read, update and delete customer records
+stored in the demo backend and you have completed creating your first CRUD UI
+with Vaadin.
 
 If you are an experienced Java developer, you are probably already full of ideas
 how you can use your existing skills and create new shiny web UIs for your
 existing Java apps. If you want more ideas how to create real applications with
 see for example Spring guide
 http://spring.io/guides/gs/crud-with-vaadin/[Creating CRUD UI with Vaadin],
-where you'll create a bit similar UI for an Spring Data JPA backend or some of other pointers listed below:
+where you'll create a bit similar UI for an Spring Data JPA backend or some of
+other pointers listed below:
 
  * TODO the full stack tutorial with Java EE 7 and Vaadin CDI
  * http://spring.io/guides/gs/crud-with-vaadin/[Creating CRUD UI with Vaadin]
