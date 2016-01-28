@@ -1,5 +1,6 @@
 package my.vaadin.app;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.annotation.WebServlet;
@@ -11,7 +12,6 @@ import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
-import com.vaadin.shared.ui.grid.ScrollDestination;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Grid;
@@ -28,7 +28,9 @@ import com.vaadin.ui.themes.ValoTheme;
 @Widgetset("my.vaadin.app.MyAppWidgetset")
 public class MyUI extends UI {
 
-	CustomerService service = CustomerService.getInstance();
+	private static final long serialVersionUID = 6835912267114665889L;
+
+	private transient CustomerService service = CustomerService.getInstance();
 
 	Grid grid = new Grid();
 
@@ -74,14 +76,14 @@ public class MyUI extends UI {
 			}
 		});
 		updateList();
-		
+
 		form.setVisible(false);
 
 		HorizontalLayout main = new HorizontalLayout(grid, form);
 		main.setSizeFull();
 		main.setExpandRatio(grid, 1);
 		grid.setSizeFull();
-		
+
 		layout.addComponents(toolbar, main);
 		layout.setSizeFull();
 		layout.setExpandRatio(main, 1);
@@ -94,6 +96,12 @@ public class MyUI extends UI {
 	public void updateList() {
 		List<Customer> customers = service.findAll(filterText.getValue());
 		grid.setContainerDataSource(new BeanItemContainer<>(Customer.class, customers));
+	}
+
+	private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+		in.defaultReadObject();
+		System.out.println("Deserializing " + this.getClass().getSimpleName());
+		service = CustomerService.getInstance(); 
 	}
 
 	@WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)

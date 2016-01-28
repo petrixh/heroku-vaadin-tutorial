@@ -7,8 +7,9 @@ import java.util.Date;
  * A entity object, like in any other Java application. In a typical real world
  * application this could for example be a JPA entity.
  */
-@SuppressWarnings("serial")
 public class Customer implements Serializable, Cloneable {
+
+	private static final long serialVersionUID = 4458192596999199701L;
 
 	private Long id;
 
