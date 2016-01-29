@@ -30,7 +30,7 @@ public class MyUI extends UI {
 
 	private static final long serialVersionUID = 6835912267114665889L;
 
-	private transient CustomerService service = CustomerService.getInstance();
+	private transient CustomerService service = CustomerServicePostgres.getInstance();
 
 	Grid grid = new Grid();
 
@@ -101,7 +101,7 @@ public class MyUI extends UI {
 	private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
 		in.defaultReadObject();
 		System.out.println("Deserializing " + this.getClass().getSimpleName());
-		service = CustomerService.getInstance(); 
+		service = CustomerServicePostgres.getInstance(); 
 	}
 
 	@WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
