@@ -1,6 +1,8 @@
-package my.vaadin.app;
+package my.vaadin.app.service;
 
 import java.util.List;
+
+import my.vaadin.app.Customer;
 
 public interface CustomerService {
 

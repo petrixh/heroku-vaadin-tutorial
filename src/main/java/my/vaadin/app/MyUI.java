@@ -1,6 +1,5 @@
 package my.vaadin.app;
 
-import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.annotation.WebServlet;
@@ -21,6 +20,9 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
+import my.vaadin.app.service.CustomerService;
+import my.vaadin.app.service.CustomerServiceImpl;
+
 /**
  *
  */
@@ -28,9 +30,7 @@ import com.vaadin.ui.themes.ValoTheme;
 @Widgetset("my.vaadin.app.MyAppWidgetset")
 public class MyUI extends UI {
 
-	private static final long serialVersionUID = 6835912267114665889L;
-
-	private transient CustomerService service = CustomerServicePostgres.getInstance();
+	private transient CustomerService service = CustomerServiceImpl.getInstance();
 
 	Grid grid = new Grid();
 
@@ -97,12 +97,6 @@ public class MyUI extends UI {
 		List<Customer> customers = service.findAll(filterText.getValue());
 		grid.setContainerDataSource(new BeanItemContainer<>(Customer.class, customers));
 		form.setVisible(false);
-	}
-
-	private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
-		in.defaultReadObject();
-		System.out.println("Deserializing " + this.getClass().getSimpleName());
-		service = CustomerServicePostgres.getInstance(); 
 	}
 
 	@WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)

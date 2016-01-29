@@ -1,4 +1,4 @@
-package my.vaadin.app;
+package my.vaadin.app.service;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -13,13 +13,21 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
 import java.util.logging.Logger;
+import my.vaadin.app.Customer;
+import my.vaadin.app.CustomerStatus;
 
+/**
+ * Minimalistic back-end implementation that talks to a PostgreSQL database
+ * using plain JDBC. No locking/versioning logic etc. just for demonstration
+ * purposes on the Heroku platform.
+ * 
+ */
 public class CustomerServicePostgres implements CustomerService {
-	
-	private static Logger log = Logger.getLogger(CustomerServicePostgres.class.getName()); 
+
+	private static Logger log = Logger.getLogger(CustomerServicePostgres.class.getName());
 
 	private static CustomerService instance;
-	
+
 	private String databaseURL = "jdbc:postgresql://127.0.0.1:5432/herokutestdb";
 	private String dbUserName = "vaadin";
 	private String dbPassword = "";
@@ -29,23 +37,22 @@ public class CustomerServicePostgres implements CustomerService {
 			+ "status VARCHAR(100) DEFAULT NULL," + "email VARCHAR(100) DEFAULT NULL," + "birthdate date DEFAULT NULL"
 			+ ");";
 
-	private final String SELECT_ALL_CUSTOMERS = "SELECT * from customer";
-	private final String SELECT_ALL_CUSTOMERS_WHERE = "SELECT * FROM customer WHERE firstname LIKE ? OR lastname LIKE ?";
+	private static final String SELECT_ALL_CUSTOMERS = "SELECT * FROM customer";
+	private static final String SELECT_ALL_CUSTOMERS_WHERE = "SELECT * FROM customer WHERE firstname LIKE ? OR lastname LIKE ?";
 
 	// Prepared statements
-	private final String DELETE_FROM_CUSTOMER_WHERE_ID = "DELETE FROM customer where id=?";
-	private final String INSERT_TO_CUSTOMER_SQL = "INSERT INTO customer (firstname, lastname,status,email, birthDate) values(?,?,?,?,?);";
-	private String UPDATE_CUSTOMER_SQL = "UPDATE customer SET firstname=?,lastname=?,status=?,email=? ,birthDate=? WHERE id=? ;";
-	private static final String SELECT_COUNT_FROM_CUSTOMER = "select count(*) FROM customer";
-	
-	
+	private static final String DELETE_FROM_CUSTOMER_WHERE_ID = "DELETE FROM customer WHERE id=?";
+	private static final String INSERT_TO_CUSTOMER_SQL = "INSERT INTO customer (firstname, lastname,status,email, birthDate) values(?,?,?,?,?);";
+	private static final String UPDATE_CUSTOMER_SQL = "UPDATE customer SET firstname=?,lastname=?,status=?,email=? ,birthDate=? WHERE id=? ;";
+	private static final String SELECT_COUNT_FROM_CUSTOMER = "SELECT count(*) FROM customer";
 
 	private CustomerServicePostgres() {
 		Connection connection = null;
 		try {
 			Class.forName("org.postgresql.Driver");
 
-			//Parse database connection url from system env if available (Heroku sets this automatically for the dyno) 
+			// Parse database connection url from system env if available
+			// (Heroku sets this automatically for the Dyno)
 			try {
 				parseDbURLFromSystemEnv();
 			} catch (URISyntaxException e) {
@@ -67,11 +74,9 @@ public class CustomerServicePostgres implements CustomerService {
 
 			connection.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new RuntimeException("Error connecting to the database.", e);
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new RuntimeException("PostgreSQL driver not found, did you remember to add the dependency?", e);
 		} finally {
 			try {
 				if (connection != null && !connection.isClosed()) {
@@ -100,10 +105,7 @@ public class CustomerServicePostgres implements CustomerService {
 		return connection;
 	}
 
-	/**
-	 * @return a reference to an example facade for Customer objects.
-	 */
-	static CustomerService getInstance() {
+	public synchronized static CustomerService getInstance() {
 		if (instance == null) {
 			instance = new CustomerServicePostgres();
 		}
@@ -122,13 +124,13 @@ public class CustomerServicePostgres implements CustomerService {
 		try {
 			connection = getConnection();
 			ResultSet executeQuery;
-			if(stringFilter != null && !"".equals(stringFilter.trim())){
+			if (stringFilter != null && !"".equals(stringFilter.trim())) {
 				PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_CUSTOMERS_WHERE);
-				preparedStatement.setString(1, "%"+stringFilter+"%");
-				preparedStatement.setString(2, "%"+stringFilter+"%");
-				executeQuery = preparedStatement.executeQuery(); 
-				
-			}else{
+				preparedStatement.setString(1, "%" + stringFilter + "%");
+				preparedStatement.setString(2, "%" + stringFilter + "%");
+				executeQuery = preparedStatement.executeQuery();
+
+			} else {
 				Statement statement = connection.createStatement();
 				executeQuery = statement.executeQuery(SELECT_ALL_CUSTOMERS);
 			}
@@ -141,7 +143,7 @@ public class CustomerServicePostgres implements CustomerService {
 				customer.setLastName(executeQuery.getString(3));
 
 				String statusString = executeQuery.getString(4);
-				if(statusString != null){
+				if (statusString != null) {
 					customer.setStatus(CustomerStatus.valueOf(statusString));
 				}
 				customer.setEmail(executeQuery.getString(5));
@@ -173,9 +175,7 @@ public class CustomerServicePostgres implements CustomerService {
 		return findAll(stringFilter);
 	}
 
-	/**
-	 * @return the amount of all customers in the system
-	 */
+	@Override
 	public synchronized long count() {
 
 		Connection connection = null;
@@ -207,12 +207,7 @@ public class CustomerServicePostgres implements CustomerService {
 		return -1;
 	}
 
-	/**
-	 * Deletes a customer from a system
-	 *
-	 * @param value
-	 *            the Customer to be deleted
-	 */
+	@Override
 	public synchronized void delete(Customer value) {
 
 		Connection connection = null;
@@ -237,12 +232,7 @@ public class CustomerServicePostgres implements CustomerService {
 
 	}
 
-	/**
-	 * Persists or updates customer in the system. Also assigns an identifier
-	 * for new Customer instances.
-	 *
-	 * @param entry
-	 */
+	@Override
 	public synchronized void save(Customer entry) {
 		Connection connection = null;
 		try {
@@ -253,16 +243,16 @@ public class CustomerServicePostgres implements CustomerService {
 				PreparedStatement prepareStatement = connection.prepareStatement(INSERT_TO_CUSTOMER_SQL);
 				prepareStatement.setString(1, entry.getFirstName());
 				prepareStatement.setString(2, entry.getLastName());
-				if(entry.getStatus() != null){
+				if (entry.getStatus() != null) {
 					prepareStatement.setString(3, entry.getStatus().toString());
-				}else{
-					prepareStatement.setString(3, null);					
+				} else {
+					prepareStatement.setString(3, null);
 				}
 				prepareStatement.setString(4, entry.getEmail());
-				if(entry.getBirthDate() != null){
+				if (entry.getBirthDate() != null) {
 					prepareStatement.setDate(5, new java.sql.Date(entry.getBirthDate().getTime()));
-				}else{
-					prepareStatement.setDate(5, null);					
+				} else {
+					prepareStatement.setDate(5, null);
 				}
 
 				prepareStatement.execute();
@@ -273,16 +263,16 @@ public class CustomerServicePostgres implements CustomerService {
 				PreparedStatement prepareStatement = connection.prepareStatement(UPDATE_CUSTOMER_SQL);
 				prepareStatement.setString(1, entry.getFirstName());
 				prepareStatement.setString(2, entry.getLastName());
-				if(entry.getStatus() != null){
+				if (entry.getStatus() != null) {
 					prepareStatement.setString(3, entry.getStatus().toString());
-				}else{
-					prepareStatement.setString(3, null);					
+				} else {
+					prepareStatement.setString(3, null);
 				}
 				prepareStatement.setString(4, entry.getEmail());
-				if(entry.getBirthDate() != null){
+				if (entry.getBirthDate() != null) {
 					prepareStatement.setDate(5, new java.sql.Date(entry.getBirthDate().getTime()));
-				}else{
-					prepareStatement.setDate(5, null);					
+				} else {
+					prepareStatement.setDate(5, null);
 				}
 				prepareStatement.setInt(6, entry.getId().intValue());
 				prepareStatement.execute();
@@ -310,9 +300,6 @@ public class CustomerServicePostgres implements CustomerService {
 
 	}
 
-	/**
-	 * Sample data generation
-	 */
 	public void ensureTestData() {
 		if (findAll().isEmpty()) {
 			final String[] names = new String[] { "Gabrielle Patel", "Brian Robinson", "Eduardo Haugen",

@@ -1,4 +1,4 @@
-package my.vaadin.app;
+package my.vaadin.app.service;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import my.vaadin.app.Customer;
+import my.vaadin.app.CustomerStatus;
 
 /**
  * An in memory dummy "database" for the example purposes. In a typical Java app
@@ -30,7 +33,7 @@ public class CustomerServiceImpl implements CustomerService {
 	/**
 	 * @return a reference to an example facade for Customer objects.
 	 */
-	static CustomerService getInstance() {
+	public static CustomerService getInstance() {
 		if (instance == null) {
 			instance = new CustomerServiceImpl();
 			instance.ensureTestData();
