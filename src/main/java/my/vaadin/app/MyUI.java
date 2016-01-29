@@ -96,6 +96,7 @@ public class MyUI extends UI {
 	public void updateList() {
 		List<Customer> customers = service.findAll(filterText.getValue());
 		grid.setContainerDataSource(new BeanItemContainer<>(Customer.class, customers));
+		form.setVisible(false);
 	}
 
 	private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
