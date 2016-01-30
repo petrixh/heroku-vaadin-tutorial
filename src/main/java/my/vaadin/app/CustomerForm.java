@@ -8,7 +8,7 @@ import my.vaadin.app.service.CustomerServiceImpl;
 
 public class CustomerForm extends CustomerFormDesign {
 	
-	private CustomerService service = CustomerServiceImpl.getInstance();
+	private transient CustomerService service = CustomerServiceImpl.getInstance();
 	private Customer customer;
 	private MyUI parent;
 
