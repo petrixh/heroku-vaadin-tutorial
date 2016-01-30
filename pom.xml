@@ -161,7 +161,6 @@
 					</filesets>
 				</configuration>
 			</plugin>
-
 			<!-- The Jetty plugin allows us to easily test the development build by 
 				running jetty:run on the command line. -->
 			<plugin>
@@ -171,25 +170,6 @@
 				<configuration>
 					<scanIntervalSeconds>2</scanIntervalSeconds>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.asciidoctor</groupId>
-				<artifactId>asciidoctor-maven-plugin</artifactId>
-				<version>1.5.2</version>
-				<configuration>
-					<doctype>book</doctype>
-					<backend>html</backend>
-					<sourceHighlighter>coderay</sourceHighlighter>
-				</configuration>
-				<executions>
-					<execution>
-						<id>output-html</id>
-						<phase>generate-resources</phase>
-						<goals>
-							<goal>process-asciidoc</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
 
