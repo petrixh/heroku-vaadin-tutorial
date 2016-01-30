@@ -1,12 +1,16 @@
 package my.vaadin.app;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * A entity object, like in any other Java application. In a typical real world
  * application this could for example be a JPA entity.
  */
-public class Customer implements Cloneable {
+public class Customer implements Cloneable, Serializable {
+
+	
+	private static final long serialVersionUID = 4458192596999199701L;
 
 	private Long id;
 

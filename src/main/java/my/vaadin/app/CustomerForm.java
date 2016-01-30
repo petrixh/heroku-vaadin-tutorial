@@ -1,5 +1,7 @@
 package my.vaadin.app;
 
+import java.io.IOException;
+
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.event.ShortcutAction.KeyCode;
 
@@ -8,6 +10,7 @@ import my.vaadin.app.service.CustomerServiceImpl;
 
 public class CustomerForm extends CustomerFormDesign {
 	
+	private static final long serialVersionUID = -5428737617268000480L;
 	private transient CustomerService service = CustomerServiceImpl.getInstance();
 	private Customer customer;
 	private MyUI parent;
@@ -39,5 +42,18 @@ public class CustomerForm extends CustomerFormDesign {
 		service.save(customer);
 		parent.updateList();
 	}
+	
+	private void writeObject(java.io.ObjectOutputStream out)
+		     throws IOException{
+		System.out.println("Serializing instance of class: " + this.getClass().getSimpleName());
+		out.defaultWriteObject();
+	}
+	
+	private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+		in.defaultReadObject();
+		System.out.println("Deserializing " + this.getClass().getSimpleName());
+		service = CustomerServiceImpl.getInstance(); 
+	}
+
 
 }

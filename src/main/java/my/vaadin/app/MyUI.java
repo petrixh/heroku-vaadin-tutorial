@@ -1,5 +1,6 @@
 package my.vaadin.app;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.annotation.WebServlet;
@@ -29,6 +30,8 @@ import my.vaadin.app.service.CustomerServiceImpl;
 @Theme("valo")
 @Widgetset("my.vaadin.app.MyAppWidgetset")
 public class MyUI extends UI {
+
+	private static final long serialVersionUID = 8565139778896335909L;
 
 	private transient CustomerService service = CustomerServiceImpl.getInstance();
 
@@ -98,6 +101,13 @@ public class MyUI extends UI {
 		grid.setContainerDataSource(new BeanItemContainer<>(Customer.class, customers));
 		form.setVisible(false);
 	}
+	
+	private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+		in.defaultReadObject();
+		System.out.println("Deserializing " + this.getClass().getSimpleName());
+		service = CustomerServiceImpl.getInstance(); 
+	}
+
 
 	@WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
 	@VaadinServletConfiguration(ui = MyUI.class, productionMode = false)
