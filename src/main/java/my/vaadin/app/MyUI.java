@@ -30,7 +30,7 @@ import my.vaadin.app.service.CustomerServiceImpl;
 @Widgetset("my.vaadin.app.MyAppWidgetset")
 public class MyUI extends UI {
 
-	private transient CustomerService service = CustomerServiceImpl.getInstance();
+	private CustomerService service = CustomerServiceImpl.getInstance();
 
 	Grid grid = new Grid();
 

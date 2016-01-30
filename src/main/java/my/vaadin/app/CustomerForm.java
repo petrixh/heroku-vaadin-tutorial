@@ -7,21 +7,20 @@ import my.vaadin.app.service.CustomerService;
 import my.vaadin.app.service.CustomerServiceImpl;
 
 public class CustomerForm extends CustomerFormDesign {
-	
-	private static final long serialVersionUID = 4667761926311526405L;
-	private transient CustomerService service = CustomerServiceImpl.getInstance();
+
+	private CustomerService service = CustomerServiceImpl.getInstance();
 	private Customer customer;
 	private MyUI parent;
-	
+
 	public CustomerForm(MyUI myUI) {
 		this.parent = myUI;
-		save.addClickListener(e->this.save());
-		delete.addClickListener(e->this.delete());
+		save.addClickListener(e -> this.save());
+		delete.addClickListener(e -> this.delete());
 		status.removeAllItems(); // Remove demo data assigned by Designer
 		status.addItems(CustomerStatus.values());
 		save.setClickShortcut(KeyCode.ENTER);
 	}
-	
+
 	public void setCustomer(Customer customer) {
 		this.customer = customer;
 		// Show delete button for only customers already in the database
@@ -30,7 +29,7 @@ public class CustomerForm extends CustomerFormDesign {
 		setVisible(true);
 		firstName.selectAll();
 	}
-	
+
 	private void delete() {
 		service.delete(customer);
 		parent.updateList();
@@ -40,5 +39,5 @@ public class CustomerForm extends CustomerFormDesign {
 		service.save(customer);
 		parent.updateList();
 	}
-	
+
 }
