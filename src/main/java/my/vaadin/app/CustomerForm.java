@@ -7,11 +7,12 @@ import com.vaadin.event.ShortcutAction.KeyCode;
 
 import my.vaadin.app.service.CustomerService;
 import my.vaadin.app.service.CustomerServiceImpl;
+import my.vaadin.app.service.CustomerServicePostgres;
 
 public class CustomerForm extends CustomerFormDesign {
 	
 	private static final long serialVersionUID = -5428737617268000480L;
-	private transient CustomerService service = CustomerServiceImpl.getInstance();
+	private transient CustomerService service = CustomerServicePostgres.getInstance();
 	private Customer customer;
 	private MyUI parent;
 
@@ -52,7 +53,7 @@ public class CustomerForm extends CustomerFormDesign {
 	private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
 		in.defaultReadObject();
 		System.out.println("Deserializing " + this.getClass().getSimpleName());
-		service = CustomerServiceImpl.getInstance(); 
+		service = CustomerServicePostgres.getInstance(); 
 	}
 
 

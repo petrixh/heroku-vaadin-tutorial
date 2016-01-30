@@ -22,7 +22,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
 import my.vaadin.app.service.CustomerService;
-import my.vaadin.app.service.CustomerServiceImpl;
+import my.vaadin.app.service.CustomerServicePostgres;
 
 /**
  *
@@ -33,7 +33,7 @@ public class MyUI extends UI {
 
 	private static final long serialVersionUID = 8565139778896335909L;
 
-	private transient CustomerService service = CustomerServiceImpl.getInstance();
+	private transient CustomerService service = CustomerServicePostgres.getInstance();
 
 	Grid grid = new Grid();
 
@@ -105,7 +105,7 @@ public class MyUI extends UI {
 	private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
 		in.defaultReadObject();
 		System.out.println("Deserializing " + this.getClass().getSimpleName());
-		service = CustomerServiceImpl.getInstance(); 
+		service = CustomerServicePostgres.getInstance(); 
 	}
 
 

@@ -75,12 +75,12 @@
 			<artifactId>vaadin-themes</artifactId>
 		</dependency>
 
-		<!-- PostgreSQL driver  
+		<!-- PostgreSQL driver -->  
 		 <dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<version>9.4.1207.jre7</version>
-		</dependency>  -->
+		</dependency> 
 
 	</dependencies>
 
